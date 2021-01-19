@@ -1,60 +1,68 @@
 // src/context/Provider.js
 
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import CarsContext from './CarsContext';
+import PropTypes from "prop-types";
+import React, { useState } from "react";
+import CarsContext from "./CarsContext";
 
-class Provider extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      cars: {
-        red: false,
-        blue: false,
-        yellow: false,
-      },
-      signal: {
-        color: 'red',
-      },
-    }
-    this.moveCar = this.moveCar.bind(this);
-    this.changeSignal = this.changeSignal.bind(this);
-  }
+function Provider({ children }) {
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     cars: {
+  //       red: false,
+  //       blue: false,
+  //       yellow: false,
+  //     },
+  //     signal: {
+  //       color: 'red',
+  //     },
+  //   }
+  //   this.moveCar = this.moveCar.bind(this);
+  //   this.changeSignal = this.changeSignal.bind(this);
+  // }
+  const [context, setContext] = useState({
+    cars: {
+      red: true,
+      blue: false,
+      yellow: false,
+    },
+    signal: {
+      color: "red",
+    },
+  });
 
-  moveCar(car, side) {
-    this.setState({
+  const moveCar = (car, side) => {
+    setContext({
+      ...context,
       cars: {
-        ...this.state.cars,
+        ...context.cars,
         [car]: side,
       },
     });
   };
 
-  changeSignal(signalColor) {
-    this.setState({
+  const changeSignal = (signalColor) => {
+    setContext({
+      ...context,
       signal: {
-        ...this.state.signal,
+        ...context.signal,
         color: signalColor,
       },
     });
   };
 
-  render() {
-    const context = {
-      ...this.state,
-      moveCar: this.moveCar,
-      changeSignal: this.changeSignal,
-    };
+  const contextParser = {
+    ...context,
+    moveCar,
+    changeSignal,
+  };
 
-    const { children } = this.props;
-
-    return (
-      <CarsContext.Provider value={context}>
-        {children}
-      </CarsContext.Provider>
-    );
-  }
-};
+  return (
+    <CarsContext.Provider value={contextParser}>
+      {children}
+    </CarsContext.Provider>
+  );
+}
 
 Provider.propTypes = {
   children: PropTypes.node.isRequired,
